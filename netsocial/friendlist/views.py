@@ -6,6 +6,9 @@ def register_view(request):
     if request.method =="POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save() #save user details and log user in
-
+            user = form.save()
             return redirect('registration_success')
+    else:
+        form = RegisterForm()
+    
+    return render(request, 'friendlist/register_form.html', {'form': form})
