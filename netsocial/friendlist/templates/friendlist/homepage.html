@@ -8,12 +8,19 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     </head>
     <body>
-        <div class="container">
-            <h1>Netsocial</h1>
-            <div class="btn-container">
-                <a href="{% url 'login' %}" class="btn">Login</a>
-                <a href="{% url 'register' %}" class="btn">Register</a>
+        <nav class="navbar">
+            <div class="container">
+                <div class="buttons">
+                    <a href="{% url 'login' %}" class="btn">Login</a>
+                    <a href="{% url 'register' %}" class="btn">Register</a>
+                </div>
             </div>
+        </nav>
+        
+        <!-- <div class="parent-container"> -->
+        <div class="title-container">
+            <h1 class="title">Netsocial</h1>
+        <!-- </div> -->
         </div>
     </body>
 </html>
