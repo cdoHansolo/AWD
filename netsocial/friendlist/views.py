@@ -40,5 +40,7 @@ def login_view(request):
 
 def profile_view(request):
     user = request.user #user successfully login
-    context = {'user': user}
+    context = {
+                'user': user,
+              }
     return render(request, 'friendlist/profilepage.html', context)
