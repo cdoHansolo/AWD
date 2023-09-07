@@ -11,14 +11,13 @@ def home_view(request):
     return render(request, 'friendlist/homepage.html')
 
 def register_view(request):
-    if request.method =="POST":
+    if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect('profile')
+            return redirect('profile') #Redirect to user's profile
     else:
         form = RegisterForm()
-    
     return render(request, 'friendlist/register_form.html', {'form': form})
 
 def login_view(request):

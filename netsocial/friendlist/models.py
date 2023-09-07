@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=400, blank=True)
-    birthday = models.DateField(Null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics', blank=True)
 
     def __str__(self):

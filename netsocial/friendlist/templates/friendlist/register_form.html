@@ -5,7 +5,7 @@
     </head>
     <body>
         <h2>User Registration</h2>
-        <form method="post">
+        <form method="POST">
             {% csrf_token %}
             {{form.username.label_tag}} {{form.username}}
             {{form.username.errors}}
