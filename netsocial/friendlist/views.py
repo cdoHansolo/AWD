@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 from .models import UserProfile
 
@@ -13,7 +14,8 @@ from .forms import EditProfileForm
 # Create your views here
 
 def home_view(request):
-    return render(request, 'friendlist/homepage.html')
+    users = User.objects.all() #Get users from database
+    return render(request, 'friendlist/homepage.html', {'users': users})
 
 def register_view(request):
     if request.method == "POST":
@@ -70,3 +72,7 @@ def edit_profile_view(request):
     
     context = {'form': form}
     return render(request, 'friendlist/edit_profile.html', context)
+
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'friendlist/profilepage.html', {'user': user})
