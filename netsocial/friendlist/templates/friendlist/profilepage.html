@@ -14,21 +14,20 @@
             <p><strong>Email:</strong> {{user.email}}</p>
             <p><strong>Bio:</strong> {{user.profile.bio}}</p>
             <p><strong>Birthday:</strong>{{user.profile.birthday}}</p>
-            
+            <a href="{% url 'home' %}" class="btn">Home</a>
+        
             {% if user == request.user %}
                 <a href="{% url 'edit_profile' %}" class="btn">Edit Profile</a>
-                <a href="{% url 'home' %}" class="btn">Home</a>
                 <a href="{% url 'view_friend_requests' %}" class="btn">View Friend Requests</a>
-            {% else %}
+            {% elif request.user.is_authenticated %}
                 {% if is_friend %}
                     <a href="{% url 'remove_friend' user.id %}" class="btn">Remove Friend</a>
                     <a href="{% url 'home' %}" class="btn">Home</a>
-                {% elif requests.sent_friend %}
-                    <button class="btn disabled" disabled>Friend Request Sent</button>
-                    <a href="{% url 'home' %}" class="btn">Home</a>
-                {% else %}
-                    <a href="{% url 'send_friend_request' user.id %}" class="btn">Send Friend Request</a>
-                    <a href="{% url 'home' %}" class="btn">Home</a>
+                {% elif not requests.sent %}
+                    <form action="{% url 'send_friend_request' user.id %}" method="post">
+                        {% csrf_token %}
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn">Send Friend Request</a>
+                    </form> 
                 {% endif %}
             {% endif %}
         </div>

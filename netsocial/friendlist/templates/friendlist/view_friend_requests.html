@@ -11,11 +11,12 @@
     <div class="container">
         <h2>Friend Requests</h2>
         <ul>
+            <a href="{% url 'profile' %}" class="btn">My Profile</a>
             {% for request in friend_requests %}
                 <li>
-                    {{ request.sender.username }} 
-                    <a href="{% url 'accept_friend_request' request.id %}">Accept</a>
-                    <a href="{% url 'reject_friend_request' request.id %}">Reject</a>
+                    {{ request.sender.username }}
+                    <a href="{% url 'accept_friend_request' request.id %}" class="btn">Accept</a>
+                    <a href="{% url 'reject_friend_request' request.id %}" class="btn">Reject</a>
                 </li>
             {% endfor %}
         </ul>

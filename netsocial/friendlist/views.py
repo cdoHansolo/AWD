@@ -20,6 +20,7 @@ from .forms import FriendRequestForm
 
 def home_view(request):
     users = User.objects.all() #Get users from database
+    print("Is user authenticated?", request.user.is_authenticated)
     return render(request, 'friendlist/homepage.html', {'users': users})
 
 def register_view(request):
@@ -57,16 +58,21 @@ def logout_view(request):
 def profile_view(request, username=None):
     if username is None:
         user = request.user
+        print("Is user authenticated?", request.user.is_authenticated)
     else:
         user = get_object_or_404(User, username=username)
+        print("Is user authenticated?", request.user.is_authenticated)
 
     is_friend = False
+    request_sent = False
+
     if request.user.is_authenticated and request.user != user:
         is_friend = request.user.friends.filter(friend=user).exists()
 
     context = {
                 'user': user,
                 'is_friend': is_friend, #passing to template
+                'request_sent': request_sent,
               }
     return render(request, 'friendlist/profilepage.html', context)
 
@@ -93,11 +99,11 @@ def edit_profile_view(request):
     context = {'form': form}
     return render(request, 'friendlist/edit_profile.html', context)
 
+@login_required
 def send_friend_request(request, receiver_id):
     receiver = get_object_or_404(User, id=receiver_id)
     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
     friend_request.save()
-    request.sent_friend_request = True
     return redirect('profile_view', username=receiver.username)
 
 def view_friend_requests(request):
@@ -114,8 +120,7 @@ def accept_friend_request(request, request_id):
     if friend_request.receiver == request.user and friend_request.status ==' pending':
         friend_request.status = 'accepted'
         friend_request.save()
-        friend = Friend(user=friend_request.sender, friend=friend_request.receiver, status='accepted')
-        friend.save()
+        Friend.objects.create(user=friend_request.sender, friend=friend_request.receiver)
     return redirect('view_friend_requests')
 
 def reject_friend_request(request, request_id):
@@ -124,3 +129,8 @@ def reject_friend_request(request, request_id):
         friend_request.status = 'rejected'
         friend_request.save()
     return redirect('view_friend_requests')
+
+def remove_friend(request, friend_id):
+    friend = get_object_or_404(User, id=friend_id)
+    Friend.objects.filter(user=request.user, friend=friend).delete()
+    return redirect('profile_view', username=friend.username)
