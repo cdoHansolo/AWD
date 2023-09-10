@@ -22,6 +22,7 @@ class FriendRequest(models.Model):
 class Friend(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friends')
     friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_friends')
+    status = models.CharField(max_length=20, choices=(('pending','Pending'),('accepted','Accepted')), default='pending')
 
     def __str__(self):
-        return f"{self.user.username} -> {self.friend.username}"
+        return f"{self.user.username} -> {self.friend.username} ({self.status})"

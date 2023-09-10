@@ -1,16 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 
+
 from .models import UserProfile
 from .models import FriendRequest
 from .models import Friend
 
+
 from .forms import RegisterForm
 from .forms import EditProfileForm
+from .forms import FriendRequestForm
 
 # Create your views here
 
@@ -45,6 +49,10 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'friendlist/loginpage.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
 def profile_view(request, username=None):
     if username is None:
@@ -85,11 +93,34 @@ def edit_profile_view(request):
     context = {'form': form}
     return render(request, 'friendlist/edit_profile.html', context)
 
+def send_friend_request(request, receiver_id):
+    receiver = get_object_or_404(User, id=receiver_id)
+    friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
+    friend_request.save()
+    request.sent_friend_request = True
+    return redirect('profile_view', username=receiver.username)
+
 def view_friend_requests(request):
     #get friend requests
-    friend_requests = FriendRequest.objects.filter(receive=request.user, status='pending')
+    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
     context = {
         'friend_requests': friend_requests,
     }
 
     return render(request, 'friendlist/view_friend_requests.html', context)
+
+def accept_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id)
+    if friend_request.receiver == request.user and friend_request.status ==' pending':
+        friend_request.status = 'accepted'
+        friend_request.save()
+        friend = Friend(user=friend_request.sender, friend=friend_request.receiver, status='accepted')
+        friend.save()
+    return redirect('view_friend_requests')
+
+def reject_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id)
+    if friend_request.receiver == request.user and friend_request.status == 'pending':
+        friend_request.status = 'rejected'
+        friend_request.save()
+    return redirect('view_friend_requests')
