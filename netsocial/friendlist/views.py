@@ -58,21 +58,15 @@ def logout_view(request):
 def profile_view(request, username=None):
     if username is None:
         user = request.user
-        print("Is user authenticated?", request.user.is_authenticated)
+        # print("Is user authenticated?", request.user.is_authenticated)
     else:
         user = get_object_or_404(User, username=username)
-        print("Is user authenticated?", request.user.is_authenticated)
+        # print("Is user authenticated?", request.user.is_authenticated)
 
-    is_friend = False
-    request_sent = False
-
-    if request.user.is_authenticated and request.user != user:
-        is_friend = request.user.friends.filter(friend=user).exists()
-
+    friend_request_sent = request.session.pop('friend_request_sent', False) #check for flag
     context = {
                 'user': user,
-                'is_friend': is_friend, #passing to template
-                'request_sent': request_sent,
+                'friend_request_sent': friend_request_sent,
               }
     return render(request, 'friendlist/profilepage.html', context)
 
@@ -104,6 +98,7 @@ def send_friend_request(request, receiver_id):
     receiver = get_object_or_404(User, id=receiver_id)
     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
     friend_request.save()
+    request.session['friend_request_sent'] = True #set flag
     return redirect('profile_view', username=receiver.username)
 
 def view_friend_requests(request):

@@ -22,8 +22,7 @@
             {% elif request.user.is_authenticated %}
                 {% if is_friend %}
                     <a href="{% url 'remove_friend' user.id %}" class="btn">Remove Friend</a>
-                    <a href="{% url 'home' %}" class="btn">Home</a>
-                {% elif not requests.sent %}
+                {% else %}
                     <form action="{% url 'send_friend_request' user.id %}" method="post">
                         {% csrf_token %}
                         <a href="{% url 'send_friend_request' user.id %}" class="btn">Send Friend Request</a>
