@@ -26,12 +26,17 @@ def home_view(request):
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
+        # print(form.is_valid + "validity")
         if form.is_valid():
             email = form.cleaned_data['email']
+            # print(email+ "email")
+
             if User.objects.filter(email=email).exists():
                 form.add_error('email', 'This email is already in use.')
                 return render(request, 'friendlist/register_form.html', {'form': form})
             user = form.save()
+            
+
             UserProfile.objects.create(user=user)
             login(request, user) #login the new user
             return redirect('profile') #Redirect to user's profile
@@ -81,14 +86,16 @@ def edit_profile_view(request):
         return redirect('login')
     
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    print(user_profile)
 
     if request.method == "POST":
         form = EditProfileForm(request.POST)
         if form.is_valid():
             bio = form.cleaned_data['bio']
             birthday = form.cleaned_data['birthday']
-
+            
             user_profile.bio = bio
+            print(user_profile.bio)
             user_profile.birthday = birthday
             user_profile.save()
 
