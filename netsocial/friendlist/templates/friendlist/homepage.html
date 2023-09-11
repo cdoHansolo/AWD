@@ -5,10 +5,48 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="'width=device-width, initial-scale=1.0">
         <title>netsocial - Welcome</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" type="text/css" href="../../static/css/homepage.css">
     </head>
     <body>
-        <nav class="navbar">
+        <nav>
+            {% if user.is_authenticated %}
+            <ul>
+                <li><a href="{% url 'logout' %}" class="btn">Logout</a></li>
+                <li><a href="{% url 'profile' %}" class="btn">My Profile</a></li>
+            </ul>
+            {% else %}
+            <ul>
+
+          
+                <li><a class="active" href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Register</a></li>
+            </ul>
+            {% endif %}
+          </nav>
+          <div class="outer-container">
+            <h1 class="title">NetSocial</h1>
+            
+            <div class="grid-container">
+                {% for user in users %}
+                
+
+              <a class="card" a href="{% url 'profile_view' username=user.username %}">
+                <img
+                  src="https://i.pinimg.com/736x/a8/57/00/a85700f3c614f6313750b9d8196c08f5.jpg"
+                  alt="profile-picture"
+                  style="width: 100%"
+                />
+                <div class="container">
+                  <h3><b>{{ user.username }}</b></h3>
+                </div>
+                </a>
+              {% endfor %}
+              </div>
+            
+
+            </div>
+          </div>
+        <!-- <nav class="navbar">
             <div class="container">
                 <div class="buttons">
                     {% if user.is_authenticated %}
@@ -31,6 +69,6 @@
                     <li><a href="{% url 'profile_view' username=user.username %}"> {{ user.username }}</a></li>
                 {% endfor %}
             </ul>
-        </div>
+        </div> -->
     </body>
 </html>

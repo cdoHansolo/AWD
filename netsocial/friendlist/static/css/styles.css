@@ -44,6 +44,7 @@ body {
 }
 
 .btn {
+    content: 'friend request sent';
     display: inline-block;
     padding: 10px 20px;
     margin: 10px;
@@ -52,6 +53,10 @@ body {
     color: #007bff;
     text-decoration: none;
     border-radius: 5px;
+}
+
+.sendbtn:focus::after {
+    content: 'friend request sent';
 }
 
 .btn:hover {

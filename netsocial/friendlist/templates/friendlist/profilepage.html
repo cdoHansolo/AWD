@@ -6,6 +6,7 @@
         <meta name="viewport" content="'width=device-width, initial-scale=1.0">
         <title>User Profile</title>
         <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+        <!-- <script src="../../javascript/index.js" type="module" defer></script> -->
     </head>
     <body>
         <div class="container">
@@ -26,10 +27,25 @@
                 {% elif not requests.sent %}
                     <form action="{% url 'send_friend_request' user.id %}" method="post">
                         {% csrf_token %}
-                        <a href="{% url 'send_friend_request' user.id %}" class="btn">Send Friend Request</a>
+                        <div>
+                            <button id="friendRequest" value="Send Friend Request">Send friend Request</button>
+                            
+                        </div>
+                        
                     </form> 
                 {% endif %}
             {% endif %}
         </div>
+     <script>
+
+    
+    document.getElementById('friendRequest').addEventListener("click", function() {
+        document.getElementById('friendRequest').innerText = "Friend Request Sent";
+        event.preventDefault()
+        fetch("{% url 'send_friend_request' user.id %}")
+        console.log("clicked")
+    })
+    
+     </script> 
     </body>
 </html>
