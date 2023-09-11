@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    <link rel="stylesheet" href="./profile.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="{% url 'home' %}">Friends</a></li>
+        <li><a href="{% url 'chat' %}">Chat</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
+    </nav>
+
+    <div class="outer-container">
+      <div class="main-container">
+        <div class="card">
+          <img
+            src="https://i.pinimg.com/736x/a8/57/00/a85700f3c614f6313750b9d8196c08f5.jpg"
+            alt="profile-picture"
+            style="width: 70%"
+          />
+          <button>Edit</button>
+        </div>
+
+        <div class="inner-container">
+          <div>
+            <label for="name"><h1>Name</h1></label>
+            <input
+              type="text"
+              placeholder="Enter Name"
+              name="password"
+              required
+              disabled
+            />
+          </div>
+
+          <div>
+            <label for="email"><h2>Email</h2></label>
+            <input
+              type="email"
+              placeholder="Enter Email"
+              name="email"
+              required
+              disabled
+            />
+          </div>
+
+          <div>
+            <label for="bio"><h2>Bio</h2></label>
+            <input
+              type="text"
+              placeholder="Enter Bio"
+              name="bio"
+              required
+              disabled
+            />
+          </div>
+
+          <div>
+            <label for="birthday"><h2>Birthday</h2></label>
+            <input
+              type="date"
+              placeholder="Enter Birthday"
+              name="bio"
+              required
+              disabled
+            />
+          </div>
+        </div>
+
+        <div class="feed-container">
+          <div class="post-container">
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted</p>
+            </div>
+
+            <div class="post">
+              <p>This is the post this idiot posted2</p>
+            </div>
+          </div>
+
+          <div class="submit-container">
+            <label for="feed"><b></b></label>
+            <input type="text" name="feed" />
+
+            <button type="submit">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
