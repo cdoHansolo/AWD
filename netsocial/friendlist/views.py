@@ -76,7 +76,7 @@ def profile_view(request, username=None):
     if request.user.is_authenticated and request.user != user:
         is_friend = request.user.friends.filter(friend=user).exists()
 
-    user_posts = Post.objects.filter(user=request.user)
+    user_posts = Post.objects.filter(user=user)
 
     context = {
                 'user': user,
@@ -187,12 +187,12 @@ def create_post(request):
     print("request")
     if request.method == 'POST':
         print("POST WORKS")
-        form = PostForm(request.POST, request.FILES)
+        form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
             post.save()
-            return redirect('profile_view')  # Redirect to the user's profile page
+            return redirect('profile_view', username=request.user.username)  # Redirect to the user's profile page
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
