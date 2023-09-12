@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile
 from .models import FriendRequest
+from .models import Post
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=254, required=True, help_text='Please enter a valid email address.')
@@ -30,3 +31,8 @@ class FriendRequestForm(forms.ModelForm):
     class Meta:
         model = FriendRequest
         fields = []
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content', 'image']

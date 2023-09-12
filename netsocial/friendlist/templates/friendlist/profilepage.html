@@ -56,7 +56,9 @@
   <body>
     <nav>
       <ul>
-        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        {% if request.user.is_authenticated %}
+          <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
         <li><a href="{% url 'friend_page_view' %}">Friends</a></li>
         
         <li><a href="{% url 'home' %}">Home</a></li>
@@ -71,7 +73,21 @@
             alt="profile-picture"
             style="width: 70%"
           />
-          <button id="editButton" onclick="editProfile()">Edit</button>
+          {% if user == request.user %}
+          <!-- <button id="editButton" onclick="editProfile()">Edit</button> -->
+          <button id="editButton">Edit</button>
+          {% endif %}
+
+          {% if user != request.user %}
+          <form action="{% url 'send_friend_request' user.id %}" method="post">
+            {% csrf_token %}
+            <div>
+                <button id="friendRequest" value="Send Friend Request">Send friend Request</button>
+            </div>
+            
+        </form> 
+        {% endif %}
+
         </div>
 
         <form method="post" id="profileForm">
@@ -129,21 +145,20 @@
             />
           </div>
         </div>
-        <button type="button" onclick="saveProfile()" id="savebutton" style="display: none;">Save</button>
+        <!-- <button type="button" onclick="saveProfile()" id="savebutton" style="display: none;">Save</button> -->
+        <button type="button"  id="savebutton" style="display: none;">Save</button>
 
-        <div class="feed-container">
+        <!-- <div class="feed-container">
           <div class="post-container">
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
 
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>            
+            {% for post in user_posts %}
+    <div class="post">
+        <p>{{ post.content }}</p>
+        {% if post.image %} 
+            <img src="{{ post.image.url }}" alt="Post Image">
+        {% endif %}
+    </div>
+        {% endfor %}          
 
           <div class="submit-container">
             <label for="feed"><b></b></label>
@@ -152,9 +167,24 @@
             <button type="submit">Post</button>
           </div>
         </div>
-      </div>
+      </div> -->
+
+      <div class="feed-container">
+        <form action="%url 'create_post'%" method="post">
+          {% csrf_token %}
+          <div class="submit-container">
+            <label for="feed"><b></b></label>
+            <input type="text" name="content" placeholder="Write something..." required />
+                <button type="submit" id="submitPost" >Post</button>
+            </div>
+        </form>
     </div>
-    <script>
+
+    
+   
+    
+    </div>
+    <!-- <script>
       function editProfile() {
         // Enable the input fields for editing
         document.getElementById('usernameInput').disabled = false;
@@ -180,6 +210,11 @@
         // Submit the form to save changes
         document.getElementById('profileForm').submit();
         }
-    </script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        document.getElementById('submitPost').addEventListener("click", function() {
+          fetch("{% url 'create_post'  %}", { method: "POST" ,
+                                              header: {'X-CSRFToken':csftoken}})
+        })
+    </script> -->
   </body>
 </html>  

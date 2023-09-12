@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../static/css/friendpage.css" />
   </head>
   <body>
+
     <nav>
       <ul>
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
@@ -15,6 +16,8 @@
       </ul>
     </nav>
 
+    <h2>friend requests!</h2>
+    {% if user == request.user %}
     <div>
       {% for request in friend_requests %}
 
@@ -30,14 +33,20 @@
             {% csrf_token %}
             <button type="submit">Reject</button>
           </form>
-          <!-- <button>
-          <a href="{% url 'accept_friend_request' request.id %}">Accept</a></button>
-          <button>
-          <a href="{% url 'reject_friend_request' request.id %}">Reject</a></button> -->
         </div>
       </div>
       {% endfor %}
 
     </div>
+    {% endif %}
+
+    <div>
+      {% for friend in friends %}
+    <div>
+        <p>Name: {{ friend.friend.username }}</p>
+    </div>
+{% endfor %}
+    </div>
+
   </body>
 </html>
