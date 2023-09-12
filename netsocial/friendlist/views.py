@@ -124,20 +124,41 @@ def view_friend_requests(request):
 
 def accept_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id)
-    if friend_request.receiver == request.user and friend_request.status ==' pending':
+    if friend_request.receiver == request.user and friend_request.status == 'pending':
         friend_request.status = 'accepted'
         friend_request.save()
         Friend.objects.create(user=friend_request.sender, friend=friend_request.receiver)
-    return redirect('view_friend_requests')
+    
+    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    context = {
+        'friend_requests': friend_requests,
+    }
+    
+    return render(request, 'friendlist/friendpage.html', context)
 
 def reject_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id)
     if friend_request.receiver == request.user and friend_request.status == 'pending':
         friend_request.status = 'rejected'
         friend_request.save()
-    return redirect('view_friend_requests')
+    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    context = {
+        'friend_requests': friend_requests,
+    }
+    
+    return render(request, 'friendlist/friendpage.html', context)
 
 def remove_friend(request, friend_id):
     friend = get_object_or_404(User, id=friend_id)
     Friend.objects.filter(user=request.user, friend=friend).delete()
     return redirect('profile_view', username=friend.username)
+
+
+def friends_page_view(request):
+    #get friend requests
+    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    context = {
+        'friend_requests': friend_requests,
+    }
+    
+    return render(request, 'friendlist/friendpage.html', context)

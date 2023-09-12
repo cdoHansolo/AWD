@@ -57,7 +57,7 @@
     <nav>
       <ul>
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
-        <li><a href="{% url 'home' %}">Friends</a></li>
+        <li><a href="{% url 'friend_page_view' %}">Friends</a></li>
         
         <li><a href="{% url 'home' %}">Home</a></li>
       </ul>
@@ -71,16 +71,20 @@
             alt="profile-picture"
             style="width: 70%"
           />
-          <button>Edit</button>
+          <button id="editButton" onclick="editProfile()">Edit</button>
         </div>
 
+        <form method="post" id="profileForm">
+          {% csrf_token %}
         <div class="inner-container">
           <div>
             <label for="name"><h1>Name</h1></label>
             <input
               type="text"
               placeholder="Enter Name"
-              name="password"
+              name="username"
+              id="usernameInput"
+              value="{{ user.username }}"
               required
               disabled
             />
@@ -92,6 +96,8 @@
               type="email"
               placeholder="Enter Email"
               name="email"
+              id="emailInput"
+              value="{{ user.email }}"
               required
               disabled
             />
@@ -103,6 +109,8 @@
               type="text"
               placeholder="Enter Bio"
               name="bio"
+              id="bioInput"
+              value="{{ user.profile.bio }}"
               required
               disabled
             />
@@ -113,12 +121,15 @@
             <input
               type="date"
               placeholder="Enter Birthday"
-              name="bio"
+              name="birthday"
+              id="birthdayInput"
+              value="{{ user.profile.birthday}}"
               required
               disabled
             />
           </div>
         </div>
+        <button type="button" onclick="saveProfile()" id="savebutton" style="display: none;">Save</button>
 
         <div class="feed-container">
           <div class="post-container">
@@ -132,44 +143,7 @@
 
             <div class="post">
               <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted</p>
-            </div>
-
-            <div class="post">
-              <p>This is the post this idiot posted2</p>
-            </div>
-          </div>
+            </div>            
 
           <div class="submit-container">
             <label for="feed"><b></b></label>
@@ -180,5 +154,32 @@
         </div>
       </div>
     </div>
+    <script>
+      function editProfile() {
+        // Enable the input fields for editing
+        document.getElementById('usernameInput').disabled = false;
+        document.getElementById('emailInput').disabled = false;
+        document.getElementById('bioInput').disabled = false;
+        document.getElementById('birthdayInput').disabled = false;
+
+        // Show the Save button and hide the Edit button
+        document.getElementById('saveButton').style.display = 'block';
+        document.querySelector('button[onclick="editProfile()"]').style.display = 'none';
+        }
+
+      function saveProfile() {
+        // Disable the input fields
+        document.getElementById('usernameInput').disabled = true;
+        document.getElementById('emailInput').disabled = true;
+        document.getElementById('bioInput').disabled = true;
+        document.getElementById('birthdayInput').disabled = true;
+
+        // Hide the Save button and show the Edit button
+        document.getElementById('saveButton').style.display = 'none';
+        document.getElementById('editButton').style.display = 'block';
+        // Submit the form to save changes
+        document.getElementById('profileForm').submit();
+        }
+    </script>
   </body>
-</html>
+</html>  

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>friend_request</title>
+    <link rel="stylesheet" href="../../static/css/friendpage.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="{% url 'home' %}">Friends</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      {% for request in friend_requests %}
+
+      <div class="friend_request-container">
+        <h1>          {{ request.sender.username }}
+        </h1>
+        <div class="accept-reject">
+          <form method="post" action="{% url 'accept_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Accept</button>
+          </form>
+          <form method="post" action="{% url 'reject_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Reject</button>
+          </form>
+          <!-- <button>
+          <a href="{% url 'accept_friend_request' request.id %}">Accept</a></button>
+          <button>
+          <a href="{% url 'reject_friend_request' request.id %}">Reject</a></button> -->
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </body>
+</html>
