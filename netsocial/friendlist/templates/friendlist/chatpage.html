@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <link rel="stylesheet" href="./chat.css" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="{% url 'home' %}">Friends</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
+    </nav>
+
+    <div class="outer-container">
+      <div class="main-container">
+        <div class="feed-container">
+          <div class="post-container">
+            <div class="post">
+              <p><b>Alvin</b></p>
+              <p id="chat-text">Hello</p>
+              <span>10:26am</span>
+            </div>
+
+            <div class="post">
+              <p><b>JJ</b></p>
+              <p id="chat-text">Bye</p>
+              <span>10:26am</span>
+            </div>
+
+            <div class="post">
+              <p><b>Alvin</b></p>
+              <p id="chat-text">How are you?</p>
+              <span>10:26am</span>
+            </div>
+          </div>
+
+          <div class="submit-container">
+            <label for="feed"><b></b></label>
+            <input type="text" name="feed" />
+
+            <button type="submit">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

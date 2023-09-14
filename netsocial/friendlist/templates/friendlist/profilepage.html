@@ -11,6 +11,7 @@
       <ul>
         {% if request.user.is_authenticated %}
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        <li><a class="active" href="{% url 'chatbox' %}">chatbox</a></li>
         {% endif %}
         <li><a href="{% url 'friend_page_view' %}">Friends</a></li>
 

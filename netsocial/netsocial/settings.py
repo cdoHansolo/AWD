@@ -30,6 +30,17 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# Use Redis for Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "host":[('127.0.0.1', 6379)],
+        },
+    },
+}
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'friendlist',
+    'channels',
+    'channels_redis',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'netsocial.wsgi.application'
+ASGI_APPLICATION = 'netsocial.asgi.application'
 
 
 # Database
