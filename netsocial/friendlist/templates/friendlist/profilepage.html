@@ -11,9 +11,9 @@
       <ul>
         {% if request.user.is_authenticated %}
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
-        {% endif %}
+        <li><a href="{% url 'chat_box' %}">Chatbox</a></li>
         <li><a href="{% url 'friend_page_view' %}">Friends</a></li>
-
+        {% endif %}
         <li><a href="{% url 'home' %}">Home</a></li>
       </ul>
     </nav>
@@ -98,17 +98,11 @@
           <button type="button" id="savebutton" style="display: none;">Save</button>
         </form>
 
-        <!-- Add a section for posting new content -->
-        <div class="new-post">
-          <form method="post" id="newPostForm">
-            {% csrf_token %}
-            <textarea name="content" placeholder="Write something..." required></textarea>
-            <button type="submit">Post</button>
-          </form>
-        </div>
-
+        
         <!-- Show existing posts -->
         <div class="feed-container">
+                    <div class="post-container">
+
           {% for post in user_posts %}
           <div class="post">
             <p>{{ post.content }}</p>
@@ -118,6 +112,17 @@
             {% endif %}
           </div>
           {% endfor %}
+          </div>
+          <!-- Add a section for posting new content -->
+
+        <div class="submit-container">
+          <form method="post" id="newPostForm">
+            {% csrf_token %}
+            <!-- <textarea name="content" placeholder="Write something..." required></textarea> -->
+            <input name="content" placeholder="Write something..." required> 
+            <button type="submit">Post</button>
+          </form>
+        </div>
         </div>
       </div>
     </div>
@@ -145,7 +150,7 @@
             feedContainer.appendChild(newPost);
 
             // Clear the textarea
-            this.querySelector('textarea').value = '';
+            // this.querySelector('textarea').value = '';
           })
           .catch((error) => {
             console.error('Error:', error);

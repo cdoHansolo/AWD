@@ -4,9 +4,9 @@ from friendlist.routing import websocket_urlpatterns  # Import your WebSocket UR
 
 application = ProtocolTypeRouter(
     {
-        "http": get_asgi_application(),
+        "http": get_asgi_application(),  # Default ASGI application for HTTP requests
         "websocket": URLRouter(
-            websocket_urlpatterns
+            websocket_urlpatterns  # Your WebSocket URL patterns
         ),
     }
 )

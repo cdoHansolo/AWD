@@ -11,42 +11,97 @@
     <nav>
       <ul>
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
-        <li><a href="{% url 'home' %}">Friends</a></li>
+        <li><a href="{% url 'profile' %}">My Profile</a></li>
         <li><a href="{% url 'home' %}">Home</a></li>
       </ul>
     </nav>
 
-    <h2>friend requests!</h2>
+    <h2>Friend Requests</h2>
     {% if user == request.user %}
-    <div>
-      {% for request in friend_requests %}
-
-      <div class="friend_request-container">
-        <h1>          {{ request.sender.username }}
-        </h1>
-        <div class="accept-reject">
-          <form method="post" action="{% url 'accept_friend_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Accept</button>
-          </form>
-          <form method="post" action="{% url 'reject_friend_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Reject</button>
-          </form>
-        </div>
-      </div>
-      {% endfor %}
-
-    </div>
+        {% if friend_requests %}
+            <div>
+                {% for request in friend_requests %}
+                    <div class="friend_request-container">
+                        <p>{{ request.sender.username }}</p>
+                        <div class="accept-reject">
+                            <form method="post" action="{% url 'accept_friend_request' request.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="accept-friend">Accept</button>
+                            </form>
+                            <form method="post" action="{% url 'reject_friend_request' request.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="reject-friend">Reject</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No friend requests.</p>
+        {% endif %}
     {% endif %}
 
     <div>
-      {% for friend in friends %}
-    <div>
-        <p>Name: {{ friend.friend.username }}</p>
-    </div>
-{% endfor %}
+      <h2>Friends</h2>
+        {% for friend in friends %}
+            <div class="accept-reject">
+                <p>Name: {{ friend.friend.username }}</p>
+                <button class="remove-friend" data-friend-id="{{ friend.friend.id }}">Remove Friend</button>
+              </div>
+        {% endfor %}
+
     </div>
 
-  </body>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var removeButtons = document.querySelectorAll('.remove-friend');
+
+          removeButtons.forEach(function(button) {
+              button.addEventListener('click', function(event) {
+                  var friendId = event.target.getAttribute('data-friend-id');
+                  var confirmation = confirm("Are you sure you want to remove this friend?");
+                  if (confirmation) {
+                      // Send a POST request using Fetch API
+                      fetch(`/remove_friend/${friendId}/`, {
+                          method: 'POST',
+                          headers: {
+                              'X-CSRFToken': '{{ csrf_token }}', // Include CSRF token
+                              'Content-Type': 'application/json',
+                          },
+                      })
+                      .then(response => {
+                          if (!response.ok) {
+                              throw new Error('Network response was not ok');
+                          }
+                          return response.json(); // Assuming your view returns JSON
+                      })
+                      .then(data => {
+                          // Handle the response data if needed
+                          console.log(data);
+                          // If you want to do something after the friend is removed, do it here
+                      })
+                      .catch(error => {
+                          console.error('There was a problem with the fetch operation:', error);
+                      });
+                  }
+              });
+          });
+
+          var acceptButtons = document.querySelectorAll('.accept-friend');
+          acceptButtons.forEach(function(button) {
+              button.addEventListener('click', function(event) {
+                  // Add code to handle accepting friend request here
+              });
+          });
+
+          var rejectButtons = document.querySelectorAll('.reject-friend');
+          rejectButtons.forEach(function(button) {
+              button.addEventListener('click', function(event) {
+                  // Add code to handle rejecting friend request here
+              });
+          });
+      });
+  </script>  
+      
+  </body> 
 </html>

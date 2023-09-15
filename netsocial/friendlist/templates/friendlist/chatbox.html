@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <link rel="stylesheet" href="../../static/css/chatbox.css" />
+    
+  <script>
+  const socket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+  socket.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      const feedContainer = document.querySelector('.feed-container');
+      feedContainer.innerHTML += `
+          <div class="post">
+              <p><b>${data.sender}</b></p>
+              <p id="chat-text">${data.message}</p>
+              <span>${data.timestamp}</span>
+          </div>
+      `;
+  };
+
+  function sendMessage() {
+      const feedInput = document.querySelector('input[name="feed"]');
+      const message = feedInput.value.trim();
+      if (message) {
+          socket.send(JSON.stringify({'message': message}));
+          feedInput.value = '';
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const sendButton = document.querySelector('button[type="submit"]');
+      sendButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          sendMessage();
+      });
+
+      document.addEventListener('keydown', function(event) {
+          if (event.keyCode === 13) {
+              sendMessage();
+          }
+      });
+  });
+  </script>
+
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
+    </nav>
+
+    <div class="outer-container">
+      <div class="main-container">
+        <div class="feed-container">
+          <div class="post-container">
+            <div class="post">
+              <p><b>Alvin</b></p>
+              <p id="chat-text">Hello</p>
+              <span>10:26am</span>
+            </div>
+
+            <div class="post">
+              <p><b>JJ</b></p>
+              <p id="chat-text">Bye</p>
+              <span>10:26am</span>
+            </div>
+
+            <div class="post">
+              <p><b>Alvin</b></p>
+              <p id="chat-text">How are you?</p>
+              <span>10:26am</span>
+            </div>
+          </div>
+
+          <div class="submit-container">
+            <label for="feed"><b></b></label>
+            <input type="text" name="feed" />
+
+            <button type="submit">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

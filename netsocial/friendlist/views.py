@@ -161,15 +161,6 @@ def remove_friend(request, friend_id):
     return redirect('profile_view', username=friend.username)
 
 
-# def friends_page_view(request):
-#     #get friend requests
-#     friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
-#     context = {
-#         'friend_requests': friend_requests,
-#     }
-    
-#     return render(request, 'friendlist/friendpage.html', context)
-
 def friends_page_view(request):
     #get friend requests
     friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
@@ -197,4 +188,5 @@ def create_post(request):
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
 
-
+def chat_box(request):
+    return render(request, 'friendlist/chatbox.html')
