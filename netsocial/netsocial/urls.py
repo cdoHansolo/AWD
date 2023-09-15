@@ -22,6 +22,6 @@ urlpatterns = [
     # path('friends/<int:friend_id', views.friend_page, name='friend_page'),
     path('friendpage/', views.friends_page_view, name='friend_page_view'),
     path('create_post/', views.create_post, name='create_post'),
-    
+
 
 ]
