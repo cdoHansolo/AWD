@@ -12,6 +12,7 @@
       <ul>
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
         <li><a href="{% url 'profile' %}">My Profile</a></li>
+        <li><a href="{% url 'users_search' %}">Search Friends</a></li>
         <li><a href="{% url 'home' %}">Home</a></li>
       </ul>
     </nav>
@@ -73,12 +74,10 @@
                           if (!response.ok) {
                               throw new Error('Network response was not ok');
                           }
-                          return response.json(); // Assuming your view returns JSON
+                          return response.json(); 
                       })
                       .then(data => {
-                          // Handle the response data if needed
                           console.log(data);
-                          // If you want to do something after the friend is removed, do it here
                       })
                       .catch(error => {
                           console.error('There was a problem with the fetch operation:', error);
@@ -90,14 +89,12 @@
           var acceptButtons = document.querySelectorAll('.accept-friend');
           acceptButtons.forEach(function(button) {
               button.addEventListener('click', function(event) {
-                  // Add code to handle accepting friend request here
               });
           });
 
           var rejectButtons = document.querySelectorAll('.reject-friend');
           rejectButtons.forEach(function(button) {
               button.addEventListener('click', function(event) {
-                  // Add code to handle rejecting friend request here
               });
           });
       });

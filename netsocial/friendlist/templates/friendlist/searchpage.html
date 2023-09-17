@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="'width=device-width, initial-scale=1.0">
-        <title>netsocial - Welcome</title>
+        <title>User Search</title>
         <link rel="stylesheet" type="text/css" href="../../static/css/homepage.css">
     </head>
     <body>
@@ -20,19 +20,29 @@
           
                 <li><a class="active" href="{% url 'login' %}">Login</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
             </ul>
             {% endif %}
           </nav>
           <div class="outer-container">
-            <h1 class="title">NetSocial</h1>
+            <h1 class="title">Search for a friend</h1>
             
+            <form method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit">Search</button>
+            </form>
+
+            {% if results %}
             <div class="grid-container">
-            {% for user in users %}
+            
+            <h2>Search Results:</h2>
+            {% for user in results %}
               <a class="card" a href="{% url 'profile_view' username=user.username %}">
                 <img
                   src="https://i.pinimg.com/736x/a8/57/00/a85700f3c614f6313750b9d8196c08f5.jpg"
                   alt="profile-picture"
-                  style="width: 100%"
+                  style="width: 80px; height:80px;"
                 />
                 <div class="container">
                   <h3><b>{{ user.username }}</b></h3>
@@ -40,33 +50,8 @@
                 </a>
               {% endfor %}
               </div>
-            
-
+            {% endif %}
             </div>
           </div>
-        <!-- <nav class="navbar">
-            <div class="container">
-                <div class="buttons">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'profile' %}" class="btn">My Profile</a>
-                        <a href="{% url 'logout' %}" class="btn">Logout</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn">Login</a>
-                        <a href="{% url 'register' %}" class="btn">Register</a>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
-        <div class="title-container">
-            <h1 class="title">Netsocial</h1>
-        </div>
-        <div class="user-list">
-            <h2>All Users</h2>
-            <ul>
-                {% for user in users %}
-                    <li><a href="{% url 'profile_view' username=user.username %}"> {{ user.username }}</a></li>
-                {% endfor %}
-            </ul>
-        </div> -->
     </body>
 </html>

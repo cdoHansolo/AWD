@@ -78,7 +78,6 @@
                 id="bioInput"
                 value="{{ user.profile.bio }}"
                 required
-                disabled
               />
             </div>
 
@@ -91,7 +90,6 @@
                 id="birthdayInput"
                 value="{{ user.profile.birthday }}"
                 required
-                disabled
               />
             </div>
           </div>
@@ -156,6 +154,34 @@
             console.error('Error:', error);
           });
       });
+
+      document.getElementById('editButton').addEventListener('click', function() {
+      document.getElementById('bioInput').removeAttribute('readonly');
+      document.getElementById('savebutton').style.display = 'block';
+      });
+
+      document.getElementById('savebutton').addEventListener('click', function () {
+          const bioValue = document.getElementById('bioInput').value;
+
+          // Send a POST request to update the user's bio
+          fetch("{% url 'edit_profile' %}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: `bio=${bioValue}`,
+          })
+            .then(response => response.json())
+            .then(data => {
+              // Handle success, if needed
+              console.log('Profile updated:', data);
+            })
+            .catch(error => {
+              console.error('Error updating profile:', error);
+            });
+        });
+
     </script>
   </body>
 </html>

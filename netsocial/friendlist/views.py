@@ -15,8 +15,9 @@ from .models import Post
 
 from .forms import RegisterForm
 from .forms import EditProfileForm
-from .forms import FriendRequestForm
+# from .forms import FriendRequestForm
 from .forms import PostForm
+from .forms import SearchForm
 
 # Create your views here
 
@@ -86,30 +87,45 @@ def profile_view(request, username=None):
               }
     return render(request, 'friendlist/profilepage.html', context)
 
+# def edit_profile_view(request):
+#     if not request.user.is_authenticated:
+#         return redirect('login')
+    
+#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+#     print(user_profile)
+
+#     if request.method == "POST":
+#         form = EditProfileForm(request.POST)
+#         if form.is_valid():
+#             bio = form.cleaned_data['bio']
+#             birthday = form.cleaned_data['birthday']
+            
+#             user_profile.bio = bio
+#             print(user_profile.bio)
+#             user_profile.birthday = birthday
+#             user_profile.save()
+
+#             return redirect('profile') #redirect back to user's profile with saved details
+#     else:
+#         form = EditProfileForm(initial={'bio': user_profile.bio, 'birthday': user_profile.birthday})
+    
+#     context = {'form': form}
+#     return render(request, 'friendlist/edit_profile.html', context)
+
 def edit_profile_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-    print(user_profile)
 
     if request.method == "POST":
-        form = EditProfileForm(request.POST)
-        if form.is_valid():
-            bio = form.cleaned_data['bio']
-            birthday = form.cleaned_data['birthday']
-            
-            user_profile.bio = bio
-            print(user_profile.bio)
-            user_profile.birthday = birthday
-            user_profile.save()
+        bio = request.POST.get('bio')
+        
+        user_profile.bio = bio
+        user_profile.save()
 
-            return redirect('profile') #redirect back to user's profile with saved details
-    else:
-        form = EditProfileForm(initial={'bio': user_profile.bio, 'birthday': user_profile.birthday})
-    
-    context = {'form': form}
-    return render(request, 'friendlist/edit_profile.html', context)
+        return JsonResponse({'message': 'Profile updated successfully.'})
+
 
 @login_required
 def send_friend_request(request, receiver_id):
@@ -160,7 +176,6 @@ def remove_friend(request, friend_id):
     Friend.objects.filter(user=request.user, friend=friend).delete()
     return redirect('profile_view', username=friend.username)
 
-
 def friends_page_view(request):
     #get friend requests
     friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
@@ -171,7 +186,6 @@ def friends_page_view(request):
         'friends':friends
     }
     return render(request, 'friendlist/friendpage.html', context)
-
 
 
 def create_post(request):
@@ -187,6 +201,22 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
+
+def users_search(request):
+    if request.method =='POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = User.objects.filter(username__icontains=query)
+        else:
+            results = None
+    else:
+        form = SearchForm()
+        results = None
+
+    return render(request, 'friendlist/searchpage.html', {'form': form, 'results': results})
+
+
 
 def chat_box(request):
     return render(request, 'friendlist/chatbox.html')
