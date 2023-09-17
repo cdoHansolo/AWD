@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 
 from .models import UserProfile
@@ -14,8 +15,7 @@ from .models import Post
 
 
 from .forms import RegisterForm
-from .forms import EditProfileForm
-# from .forms import FriendRequestForm
+from .forms import UserProfileForm
 from .forms import PostForm
 from .forms import SearchForm
 
@@ -117,14 +117,23 @@ def edit_profile_view(request):
         return redirect('login')
     
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    print(user_profile.bio, user_profile.birthday)
 
     if request.method == "POST":
-        bio = request.POST.get('bio')
-        
-        user_profile.bio = bio
-        user_profile.save()
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save() 
 
-        return JsonResponse({'message': 'Profile updated successfully.'})
+            return JsonResponse({'message': 'Profile updated successfully.'})
+        else:
+            return JsonResponse({'message': 'Form is not valid.'}, status=400)
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    # Add user_profile to the context
+    context = {'form': form}
+    return render(request, 'friendlist/profilepage.html', context)
+
 
 
 @login_required
@@ -141,7 +150,7 @@ def view_friend_requests(request):
         'friend_requests': friend_requests,
     }
 
-    return render(request, 'friendlist/view_friend_requests.html', context)
+    return render(request, 'friendlist/friendpage.html', context)
 
 def accept_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id)
@@ -192,7 +201,7 @@ def create_post(request):
     print("request")
     if request.method == 'POST':
         print("POST WORKS")
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
@@ -200,7 +209,7 @@ def create_post(request):
             return redirect('profile_view', username=request.user.username)  # Redirect to the user's profile page
     else:
         form = PostForm()
-    return render(request, 'create_post.html', {'form': form})
+    return render(request, 'profilepage.html', {'form': form})
 
 def users_search(request):
     if request.method =='POST':

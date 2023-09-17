@@ -22,11 +22,6 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ('profile_picture','bio', 'birthday') #profile fields 
 
-class EditProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['bio', 'birthday']
-
 class FriendRequestForm(forms.ModelForm):
     class Meta:
         model = FriendRequest
@@ -35,7 +30,7 @@ class FriendRequestForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['content']
+        fields = ['content', 'image']
 
 class SearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)

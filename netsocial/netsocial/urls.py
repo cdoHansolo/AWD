@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.urls import path
-from friendlist import views
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 
+from friendlist import views
 
 urlpatterns = [
 
@@ -19,10 +21,12 @@ urlpatterns = [
     path('accept_friend_request/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
     path('reject_friend_request/<int:request_id>/', views.reject_friend_request, name='reject_friend_request'),
     path('remove_friend/<int:friend_id>/', views.remove_friend, name='remove_friend'),
-    # path('friends/<int:friend_id', views.friend_page, name='friend_page'),
     path('friendpage/', views.friends_page_view, name='friend_page_view'),
     path('create_post/', views.create_post, name='create_post'),
     path('chat_box/', views.chat_box, name='chat_box'),
     path('users_search/', views.users_search, name='users_search'),
-
+    
+    
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

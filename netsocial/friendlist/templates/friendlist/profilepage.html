@@ -76,8 +76,9 @@
                 placeholder="Enter Bio"
                 name="bio"
                 id="bioInput"
-                value="{{ user.profile.bio }}"
+                value="{{ user_profile.bio }}"
                 required
+                disabled
               />
             </div>
 
@@ -88,12 +89,13 @@
                 placeholder="Enter Birthday"
                 name="birthday"
                 id="birthdayInput"
-                value="{{ user.profile.birthday }}"
+                value="{{ user_profile.birthday }}"
                 required
+                disabled
               />
             </div>
           </div>
-          <button type="button" id="savebutton" style="display: none;">Save</button>
+          <button type="button" id="saveButton" style="display: none;">Save</button>
         </form>
 
         
@@ -114,10 +116,10 @@
           <!-- Add a section for posting new content -->
 
         <div class="submit-container">
-          <form method="post" id="newPostForm">
+          <form method="post" id="newPostForm" enctype="multipart/form-data">
             {% csrf_token %}
-            <!-- <textarea name="content" placeholder="Write something..." required></textarea> -->
-            <input name="content" placeholder="Write something..." required> 
+            <input name="content" placeholder="Write something..." required>
+            <input type="file" name="image" accept="image/*"> 
             <button type="submit">Post</button>
           </form>
         </div>
@@ -125,7 +127,7 @@
       </div>
     </div>
     <script>
-      // JavaScript code for handling form submission
+      // JavaScript code for handling post form submission
       document.getElementById('newPostForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the default form submission
         const formData = new FormData(this); // Get form data
@@ -145,42 +147,60 @@
             const newPost = document.createElement('div');
             newPost.className = 'post';
             newPost.innerHTML = `<p>${data.content}</p>`;
+            if (data.image_url) {
+              newPost.innerHTML += `<img src="${data.image_url}" alt="post-image">`;
+            }
             feedContainer.appendChild(newPost);
 
-            // Clear the textarea
-            // this.querySelector('textarea').value = '';
+            // Clear the inputs
+            this.querySelector('input[name="content"]').value = '';
+            this.querySelector('input[name="image"]').value = '';
           })
           .catch((error) => {
             console.error('Error:', error);
           });
       });
 
-      document.getElementById('editButton').addEventListener('click', function() {
-      document.getElementById('bioInput').removeAttribute('readonly');
-      document.getElementById('savebutton').style.display = 'block';
-      });
+        //JavaScript code for handling edit form submission
+        document.getElementById('editButton').addEventListener('click', function () {
+          // Enable the input fields
+          document.getElementById('bioInput').disabled = false;
+          document.getElementById('birthdayInput').disabled = false;
 
-      document.getElementById('savebutton').addEventListener('click', function () {
-          const bioValue = document.getElementById('bioInput').value;
-
-          // Send a POST request to update the user's bio
-          fetch("{% url 'edit_profile' %}", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'X-CSRFToken': '{{ csrf_token }}',
-            },
-            body: `bio=${bioValue}`,
-          })
-            .then(response => response.json())
-            .then(data => {
-              // Handle success, if needed
-              console.log('Profile updated:', data);
-            })
-            .catch(error => {
-              console.error('Error updating profile:', error);
-            });
+          // Show the Save button and hide the Edit button
+          document.getElementById('saveButton').style.display = 'block';
+          this.style.display = 'none';
         });
+
+        document.getElementById('saveButton').addEventListener('click', function () {
+            // Disable the input fields
+            document.getElementById('bioInput').disabled = true;
+            document.getElementById('birthdayInput').disabled = true;
+
+            // Show the Edit button and hide the Save button
+            document.getElementById('editButton').style.display = 'block';
+            this.style.display = 'none';
+
+            // Handle saving the data (e.g., make a POST request to the server)
+            const bio = document.getElementById('bioInput').value;
+            const birthday = document.getElementById('birthdayInput').value;
+
+            fetch("{% url 'edit_profile' %}", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}',
+              },
+              body: `bio=${encodeURIComponent(bio)}&birthday=${encodeURIComponent(birthday)}`,
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                alert('Profile updated successfully!');
+              })
+              .catch(error => console.error('Error:', error));
+          });
+
 
     </script>
   </body>
