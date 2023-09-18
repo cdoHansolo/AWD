@@ -29,10 +29,9 @@ def home_view(request):
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
-        # print(form.is_valid + "validity")
+
         if form.is_valid():
             email = form.cleaned_data['email']
-            # print(email+ "email")
 
             if User.objects.filter(email=email).exists():
                 form.add_error('email', 'This email is already in use.')
@@ -81,7 +80,7 @@ def profile_view(request, username=None):
 
     context = {
                 'user': user,
-                'is_friend': is_friend, #passing to template
+                'is_friend': is_friend, 
                 'request_sent': request_sent,
                 'user_posts':user_posts
               }

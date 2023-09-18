@@ -15,5 +15,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message,
             'sender': 'Anonymous',
-            'timestamp': 'now',  # You can replace this with actual timestamp
+            'timestamp': 'now',
         }))

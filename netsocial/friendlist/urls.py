@@ -6,7 +6,7 @@ from . import consumers
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": URLRouter(
-        # Define your WebSocket URL routing here
+        # Define WebSocket URL routing
         path("ws/some_path/", consumers.ChatConsumer.as_asgi()),
     ),
 })

@@ -20,7 +20,7 @@ class RegisterForm(UserCreationForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('profile_picture','bio', 'birthday') #profile fields 
+        fields = ('profile_picture','bio', 'birthday') 
 
 class FriendRequestForm(forms.ModelForm):
     class Meta:

@@ -38,7 +38,7 @@ class ProfilePageTest(TestCase):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.client.login(username='testuser', password='testpassword')
 
-        # Now, make a POST request to create a post
+        # Make a POST request to create a post
         response = self.client.post('/create_post/', {'caption': 'Test post content'}, format='json')
 
         # Check if the post was created successfully
