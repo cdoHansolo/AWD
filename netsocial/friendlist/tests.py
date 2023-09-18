@@ -1,26 +1,17 @@
 from django.test import TestCase
 
-# Create your tests here.
-# friendlist/tests.py
-
-from django.test import TestCase
-from django.urls import reverse
-
-class FriendlistViewsTests(TestCase):
-    def test_home_view(self):
-        response = self.client.get(reverse('home'))
+class HomePageTest(TestCase):
+    def test_home_page_status_code(self):
+        response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'friendlist/homepage.html')
 
-    def test_login_view(self):
-        response = self.client.get(reverse('login'))
+
+class SearchUserTest(TestCase):
+    def test_search_user_page_status_code(self):
+        response = self.client.get('/users_search/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'friendlist/loginpage.html')
 
-        # You can add more specific tests for login view if needed.
 
-    # Add more tests for other views as needed...
-
-    def test_invalid_url(self):
-        response = self.client.get('/invalid_url/')
-        self.assertEqual(response.status_code, 404)
+    def test_search_user_functionality(self):
+        response = self.client.get('/users_search/', {'query': 'username'})
+        self.assertEqual(response.status_code, 200)

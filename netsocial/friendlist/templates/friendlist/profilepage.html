@@ -12,7 +12,7 @@
         {% if request.user.is_authenticated %}
         <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
         <li><a href="{% url 'chat_box' %}">Chatbox</a></li>
-        <li><a href="{% url 'friend_page_view' %}">Friends</a></li>
+        <li><a href="{% url 'friends_page_view' user.username %}">Friends</a></li>
         {% endif %}
         <li><a href="{% url 'home' %}">Home</a></li>
       </ul>

@@ -136,12 +136,41 @@ def edit_profile_view(request):
 
 
 
+# @login_required
+# def send_friend_request(request, receiver_id):
+#     receiver = get_object_or_404(User, id=receiver_id)
+#     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
+#     friend_request.save()
+#     return redirect('profile_view', username=receiver.username)
+
+# @login_required
+# def send_friend_request(request, receiver_id):
+#     receiver = get_object_or_404(User, id=receiver_id)
+
+#     # Check if the sender and receiver are already friends
+#     if Friend.objects.filter(user=request.user, friend=receiver).exists():
+#         return JsonResponse({'message': 'You are already friends with this user.'}, status=400)
+
+#     # Check if a friend request already exists
+#     if FriendRequest.objects.filter(sender=request.user, receiver=receiver, status='pending').exists():
+#         return JsonResponse({'message': 'A friend request has already been sent.'}, status=400)
+
+#     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
+#     friend_request.save()
+#     return JsonResponse({'message': 'Friend request sent successfully.'})
+
 @login_required
 def send_friend_request(request, receiver_id):
     receiver = get_object_or_404(User, id=receiver_id)
+
+    # Check if a friend request already exists or if they are already friends
+    if FriendRequest.objects.filter(sender=request.user, receiver=receiver, status='pending').exists() or Friend.objects.filter(user=request.user, friend=receiver).exists():
+        return JsonResponse({'message': 'You have already sent a friend request or are already friends with this user.'}, status=400)
+
     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
     friend_request.save()
-    return redirect('profile_view', username=receiver.username)
+    return JsonResponse({'message': 'Friend request sent successfully!'})
+
 
 def view_friend_requests(request):
     #get friend requests
@@ -185,14 +214,39 @@ def remove_friend(request, friend_id):
     Friend.objects.filter(user=request.user, friend=friend).delete()
     return redirect('profile_view', username=friend.username)
 
-def friends_page_view(request):
-    #get friend requests
-    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
-    friends = Friend.objects.filter(user=request.user)
+# def friends_page_view(request, username):
+#     user = get_object_or_404(User, username=username)
+#     friend_requests = []
+#     friends = []
+
+#     if request.user == user:
+#         # If the logged-in user is viewing their own friend page
+#         friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+#         friends = Friend.objects.filter(user=request.user)
+#     else:
+#         # If a different user is viewing the friend page
+#         friends = Friend.objects.filter(user=user)
+
+#     context = {
+#         'friend_requests': friend_requests,
+#         'friends': friends,
+#         'viewed_user': user
+#     }
+#     return render(request, 'friendlist/friendpage.html', context)
+
+def friends_page_view(request, username):
+    user = User.objects.get(username=username)
+    friends = Friend.objects.filter(user=user)
+
+    if user == request.user:
+        friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    else:
+        friend_requests = []
 
     context = {
         'friend_requests': friend_requests,
-        'friends':friends
+        'friends': friends,
+        'user': user
     }
     return render(request, 'friendlist/friendpage.html', context)
 

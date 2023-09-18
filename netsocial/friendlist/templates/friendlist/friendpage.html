@@ -1,104 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>friend_request</title>
     <link rel="stylesheet" href="../../static/css/friendpage.css" />
-  </head>
-  <body>
+</head>
+
+<body>
 
     <nav>
-      <ul>
-        <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
-        <li><a href="{% url 'profile' %}">My Profile</a></li>
-        <li><a href="{% url 'users_search' %}">Search Friends</a></li>
-        <li><a href="{% url 'home' %}">Home</a></li>
-      </ul>
+        <ul>
+            <li><a class="active" href="{% url 'logout' %}">Logout</a></li>
+            <li><a href="{% url 'profile' %}">My Profile</a></li>
+            <li><a href="{% url 'users_search' %}">Search Friends</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
+        </ul>
     </nav>
 
-    <h2>Friend Requests</h2>
     {% if user == request.user %}
-        {% if friend_requests %}
-            <div>
-                {% for request in friend_requests %}
-                    <div class="friend_request-container">
-                        <p>{{ request.sender.username }}</p>
-                        <div class="accept-reject">
-                            <form method="post" action="{% url 'accept_friend_request' request.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="accept-friend">Accept</button>
-                            </form>
-                            <form method="post" action="{% url 'reject_friend_request' request.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="reject-friend">Reject</button>
-                            </form>
-                        </div>
-                    </div>
-                {% endfor %}
+    <h2>Friend Requests</h2>
+    
+    {% if friend_requests %}
+    <div>
+        {% for request in friend_requests %}
+        <div class="friend_request-container">
+            <p>{{ request.sender.username }}</p>
+            <div class="accept-reject">
+                <form method="post" action="{% url 'accept_friend_request' request.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="accept-friend">Accept</button>
+                </form>
+                <form method="post" action="{% url 'reject_friend_request' request.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="reject-friend">Reject</button>
+                </form>
             </div>
-        {% else %}
-            <p>No friend requests.</p>
-        {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No friend requests.</p>
+    {% endif %}
     {% endif %}
 
     <div>
-      <h2>Friends</h2>
-        {% for friend in friends %}
+        <h2>Friends</h2>
+        {% if friends %}
+            {% for friend in friends %}
             <div class="accept-reject">
                 <p>Name: {{ friend.friend.username }}</p>
                 <button class="remove-friend" data-friend-id="{{ friend.friend.id }}">Remove Friend</button>
-              </div>
-        {% endfor %}
-
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No friends yet.</p>
+        {% endif %}
     </div>
+    
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          var removeButtons = document.querySelectorAll('.remove-friend');
+        document.addEventListener('DOMContentLoaded', function () {
+            var removeButtons = document.querySelectorAll('.remove-friend');
 
-          removeButtons.forEach(function(button) {
-              button.addEventListener('click', function(event) {
-                  var friendId = event.target.getAttribute('data-friend-id');
-                  var confirmation = confirm("Are you sure you want to remove this friend?");
-                  if (confirmation) {
-                      // Send a POST request using Fetch API
-                      fetch(`/remove_friend/${friendId}/`, {
-                          method: 'POST',
-                          headers: {
-                              'X-CSRFToken': '{{ csrf_token }}', // Include CSRF token
-                              'Content-Type': 'application/json',
-                          },
-                      })
-                      .then(response => {
-                          if (!response.ok) {
-                              throw new Error('Network response was not ok');
-                          }
-                          return response.json(); 
-                      })
-                      .then(data => {
-                          console.log(data);
-                      })
-                      .catch(error => {
-                          console.error('There was a problem with the fetch operation:', error);
-                      });
-                  }
-              });
-          });
+            removeButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    var friendId = event.target.getAttribute('data-friend-id');
+                    var confirmation = confirm("Are you sure you want to remove this friend?");
+                    if (confirmation) {
+                        // Send a POST request using Fetch API
+                        fetch(`/remove_friend/${friendId}/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}', // Include CSRF token
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log(data);
+                            })
+                            .catch(error => {
+                                console.error('There was a problem with the fetch operation:', error);
+                            });
+                    }
+                });
+            });
 
-          var acceptButtons = document.querySelectorAll('.accept-friend');
-          acceptButtons.forEach(function(button) {
-              button.addEventListener('click', function(event) {
-              });
-          });
+            document.addEventListener('DOMContentLoaded', function () {
+                var acceptButtons = document.querySelectorAll('.accept-friend');
 
-          var rejectButtons = document.querySelectorAll('.reject-friend');
-          rejectButtons.forEach(function(button) {
-              button.addEventListener('click', function(event) {
-              });
-          });
-      });
-  </script>  
-      
-  </body> 
+                acceptButtons.forEach(function (button) {
+                    button.addEventListener('click', function (event) {
+                        event.preventDefault();  // Prevent the form from being submitted
+
+                        // Get the request ID from the button's data attribute
+                        var requestId = this.dataset.requestId;
+
+                        // Handle accepting the friend request (you can call your accept function here)
+                        acceptFriendRequest(requestId);
+                    });
+                });
+
+                var rejectButtons = document.querySelectorAll('.reject-friend');
+                rejectButtons.forEach(function (button) {
+                    button.addEventListener('click', function (event) {
+                        // Add your code to handle reject here
+                    });
+                });
+            });
+
+            var acceptButtons = document.querySelectorAll('.accept-friend');
+            acceptButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                });
+            });
+
+            var rejectButtons = document.querySelectorAll('.reject-friend');
+            rejectButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                });
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var friendRequestButton = document.getElementById('friendRequest');
+
+                friendRequestButton.addEventListener('click', function (event) {
+                    var confirmation = confirm("Are you sure you want to send a friend request?");
+                    if (!confirmation) {
+                        event.preventDefault();
+                    } else {
+                        fetch(`/send_friend_request/${receiver.id}/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(data => Promise.reject(data));
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                alert(data.message);  // Show success message
+                            })
+                            .catch(error => {
+                                alert(error.message);  // Show error message
+                            });
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+
 </html>
