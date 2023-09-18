@@ -5,13 +5,7 @@
         <link rel="stylesheet" href="../../static/css/login.css">
     </head>
     <body>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{message.tags}}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        
 
         <div class="outer-container">
             <form method="post">
@@ -33,7 +27,15 @@
                   name="password"
                   required
                 />
-      
+                
+                {% if messages %}
+                <ul class="messages">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="{{message.tags}}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
                 <button type="submit">Login</button>
               </div>
       

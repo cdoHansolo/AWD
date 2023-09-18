@@ -87,31 +87,6 @@ def profile_view(request, username=None):
               }
     return render(request, 'friendlist/profilepage.html', context)
 
-# def edit_profile_view(request):
-#     if not request.user.is_authenticated:
-#         return redirect('login')
-    
-#     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-#     print(user_profile)
-
-#     if request.method == "POST":
-#         form = EditProfileForm(request.POST)
-#         if form.is_valid():
-#             bio = form.cleaned_data['bio']
-#             birthday = form.cleaned_data['birthday']
-            
-#             user_profile.bio = bio
-#             print(user_profile.bio)
-#             user_profile.birthday = birthday
-#             user_profile.save()
-
-#             return redirect('profile') #redirect back to user's profile with saved details
-#     else:
-#         form = EditProfileForm(initial={'bio': user_profile.bio, 'birthday': user_profile.birthday})
-    
-#     context = {'form': form}
-#     return render(request, 'friendlist/edit_profile.html', context)
-
 def edit_profile_view(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -134,30 +109,6 @@ def edit_profile_view(request):
     context = {'form': form}
     return render(request, 'friendlist/profilepage.html', context)
 
-
-
-# @login_required
-# def send_friend_request(request, receiver_id):
-#     receiver = get_object_or_404(User, id=receiver_id)
-#     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
-#     friend_request.save()
-#     return redirect('profile_view', username=receiver.username)
-
-# @login_required
-# def send_friend_request(request, receiver_id):
-#     receiver = get_object_or_404(User, id=receiver_id)
-
-#     # Check if the sender and receiver are already friends
-#     if Friend.objects.filter(user=request.user, friend=receiver).exists():
-#         return JsonResponse({'message': 'You are already friends with this user.'}, status=400)
-
-#     # Check if a friend request already exists
-#     if FriendRequest.objects.filter(sender=request.user, receiver=receiver, status='pending').exists():
-#         return JsonResponse({'message': 'A friend request has already been sent.'}, status=400)
-
-#     friend_request = FriendRequest(sender=request.user, receiver=receiver, status='pending')
-#     friend_request.save()
-#     return JsonResponse({'message': 'Friend request sent successfully.'})
 
 @login_required
 def send_friend_request(request, receiver_id):
@@ -214,26 +165,6 @@ def remove_friend(request, friend_id):
     Friend.objects.filter(user=request.user, friend=friend).delete()
     return redirect('profile_view', username=friend.username)
 
-# def friends_page_view(request, username):
-#     user = get_object_or_404(User, username=username)
-#     friend_requests = []
-#     friends = []
-
-#     if request.user == user:
-#         # If the logged-in user is viewing their own friend page
-#         friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
-#         friends = Friend.objects.filter(user=request.user)
-#     else:
-#         # If a different user is viewing the friend page
-#         friends = Friend.objects.filter(user=user)
-
-#     context = {
-#         'friend_requests': friend_requests,
-#         'friends': friends,
-#         'viewed_user': user
-#     }
-#     return render(request, 'friendlist/friendpage.html', context)
-
 def friends_page_view(request, username):
     user = User.objects.get(username=username)
     friends = Friend.objects.filter(user=user)
@@ -263,7 +194,7 @@ def create_post(request):
             return redirect('profile_view', username=request.user.username)  # Redirect to the user's profile page
     else:
         form = PostForm()
-    return render(request, 'profilepage.html', {'form': form})
+    return render(request, 'friendlist/profilepage.html', {'form': form})
 
 def users_search(request):
     if request.method =='POST':
