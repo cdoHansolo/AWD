@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-
+from django.db.models import Q
 
 from .models import UserProfile
 from .models import FriendRequest
@@ -131,38 +131,81 @@ def view_friend_requests(request):
 
     return render(request, 'friendlist/friendpage.html', context)
 
+# def accept_friend_request(request, request_id):
+#     friend_request = get_object_or_404(FriendRequest, id=request_id)
+#     if friend_request.receiver == request.user and friend_request.status == 'pending':
+#         friend_request.status = 'accepted'
+#         friend_request.save()
+#         Friend.objects.create(user=friend_request.sender, friend=friend_request.receiver)
+#         Friend.objects.create(user=friend_request.receiver, friend=friend_request.sender)
+
+    
+#     friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+#     context = {
+#         'friend_requests': friend_requests,
+#     }
+    
+#     return render(request, 'friendlist/friendpage.html', context)
+
+# def reject_friend_request(request, request_id):
+#     friend_request = get_object_or_404(FriendRequest, id=request_id)
+#     if friend_request.receiver == request.user and friend_request.status == 'pending':
+#         friend_request.status = 'rejected'
+#         friend_request.save()
+#     friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+#     context = {
+#         'friend_requests': friend_requests,
+#     }
+    
+#     return render(request, 'friendlist/friendpage.html', context)
+
 def accept_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id)
     if friend_request.receiver == request.user and friend_request.status == 'pending':
         friend_request.status = 'accepted'
         friend_request.save()
-        Friend.objects.create(user=friend_request.sender, friend=friend_request.receiver)
-        Friend.objects.create(user=friend_request.receiver, friend=friend_request.sender)
+        Friend.objects.create(user=friend_request.sender,
+                              friend=friend_request.receiver)
+        Friend.objects.create(user=friend_request.receiver,
+                              friend=friend_request.sender)
 
-    
-    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    friend_requests = FriendRequest.objects.filter(
+        receiver=request.user, status='pending')
+    friends = Friend.objects.filter(user=request.user)
+
     context = {
         'friend_requests': friend_requests,
+        'friends': friends,
     }
-    
+
     return render(request, 'friendlist/friendpage.html', context)
+
 
 def reject_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id)
     if friend_request.receiver == request.user and friend_request.status == 'pending':
         friend_request.status = 'rejected'
         friend_request.save()
-    friend_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    friend_requests = FriendRequest.objects.filter(
+        receiver=request.user, status='pending')
+    friends = Friend.objects.filter(user=request.user)
+
     context = {
         'friend_requests': friend_requests,
+        'friends': friends,
     }
-    
+
     return render(request, 'friendlist/friendpage.html', context)
 
 def remove_friend(request, friend_id):
     friend = get_object_or_404(User, id=friend_id)
-    Friend.objects.filter(user=request.user, friend=friend).delete()
-    return redirect('profile_view', username=friend.username)
+
+    request_list = Friend.objects.filter(Q(user=request.user, friend=friend) | Q(
+            friend=request.user, user=friend))
+    request_list.delete()
+
+    return JsonResponse({'message': 'Friend removed successfully!'})
+
 
 def friends_page_view(request, username):
     user = User.objects.get(username=username)
